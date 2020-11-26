@@ -1,40 +1,31 @@
+import Pokemon from "./pokemon.js"
+import random from "./utils.js"
+const player1 = new Pokemon({
+    name: 'Pikachu',
+    type: 'electric',
+    hp: 500,
+    selectors: 'character'
+
+})
+
+const player2 = new Pokemon({
+    name: 'Charmander',
+    type: 'fire',
+    hp: 450,
+    selectors: 'enemy'
+})
+
 const btn1MaxClick = 5
 const btn2MaxClick = 10
 
 const $btn = document.getElementById('btn-kick')
 const $btn2 = document.getElementById('btn-kick2')
 const $p = document.createElement('p')
-//$p.innerText = 'Лог боя'
 const $logs = document.querySelector('#logs')
 $logs.appendChild($p)
 
 $btn.innerText = `Осталось ${btn1MaxClick}`
 $btn2.innerText = `Осталось ${btn2MaxClick}`
-
-
-const character = {
-    name: 'Pikachu',
-    defaultHP: 100,
-    damageHP: 100,
-    elHP: document.getElementById('health-character'),
-    elProgressBar: document.getElementById('progressbar-character'),
-    changeHP: changeHP,
-    renderHP: renderHP,
-    renderHPLife: renderHPLife,
-    renderProgressBarHP: renderProgressBarHP    
-}
-
-const enemy = {
-    name: 'Charmander',
-    defaultHP: 100,
-    damageHP: 100,
-    elHP: document.getElementById('health-enemy'),
-    elProgressBar: document.getElementById('progressbar-enemy'),
-    changeHP: changeHP,
-    renderHP: renderHP,
-    renderHPLife: renderHPLife,
-    renderProgressBarHP: renderProgressBarHP    
-}
 
 function btn1Count() {
     let btn1Clk = 0
@@ -71,63 +62,29 @@ let btn2CountClick = btn2Count()
 
 $btn.addEventListener('click', function() {
     console.log('Kick')
-    character.changeHP(random(20))
-    enemy.changeHP(random(20))
+    player1.changeHP(random(100, 20), function (count) {
+        console.log(count)
+        console.log(generateLog(player1, player2, count))
+    })
+    player2.changeHP(random(20))
     btn1CountClick()
 })
 
 $btn2.addEventListener('click', function() {
     console.log('Kick')
-    character.changeHP(random(10))
-    enemy.changeHP(random(10))
+    player1.changeHP(random(10), function (count) {
+        console.log(count)
+        console.log(generateLog(player1, player2, count))
+    })
+    player2.changeHP(random(10))
     btn2CountClick()
 })
 
 function init() {
     console.log('Start Game!')
-    character.renderHP()
-    enemy.renderHP()
-    }
+}
 init()
 
-function renderHP() {
-    this.renderHPLife()
-    this.renderProgressBarHP()     
-}
-
-function renderHPLife() {
-    const $character = document.getElementById('health-character')
-    this.elHP.innerText = this.damageHP + ' / ' + this.defaultHP
-}
-
-function renderProgressBarHP() {
-    this.elProgressBar.style.width = this.damageHP + '%'
-}
-
-function changeHP(count) {
-    this.damageHP -= count
-
-    
-
-    const log = this === enemy ? generateLog(this, character) : generateLog(this, enemy)
- //   console.log(`${log} ${count} [${this.damageHP}/${this.defaultHP}]`)
-
-    const $p = document.createElement('p')
-    $p.innerText = `${log} -${count} [${this.damageHP}/${this.defaultHP}]`
-    $logs.insertBefore($p, $logs.children[0])
-
-    if (this.damageHP <= 0) {
-        this.damageHP = 0        
-        setTimeout(() => alert(this.name + ' проиграл бой!'), 100)
-        $btn.disabled = true
-        $btn2.disabled = true
-    }
-    this.renderHP()
-}
-
-function random(num){
-    return Math.ceil(Math.random()*num)
-}
 
 function generateLog(firstPerson, secondPerson) {
     const logs = [
